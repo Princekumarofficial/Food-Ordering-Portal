@@ -1,13 +1,21 @@
-version: '3.8'
+version: '3'
 
 services:
   backend:
     build:
-      context: .
+      context: ./backend
     env_file:
-      - ./.env
+      - ./backend/.env
     ports:
       - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+    env_file:
+      - ./frontend/.env
+    ports:
+      - "3000:3000"
 
   web:
     image: nginx
@@ -15,5 +23,6 @@ services:
       - "80:80"
     depends_on:
       - backend
+      - frontend
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
