@@ -1,13 +1,12 @@
 import os
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
-from business.recommender import FoodItemRecommender
 from business.models import FoodItem, Hotel
 from django.core.management.base import BaseCommand
 import logging
 import numpy as np
 
-logging.basicConfig(format='%(asctime)s - %(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+logging.basicConfig(format='%(asctime)s : %(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 
 class Command(BaseCommand):
     help = "Update the FoodItem model with new data from the CSV files"
@@ -48,17 +47,21 @@ class Command(BaseCommand):
             embedding_vector = tfidf_matrix[index].toarray().tolist()
 
             # Create FoodItem object
-            food_item = FoodItem.objects.create(
-                name=row["TranslatedRecipeName"],
-                price=np.random.randint(100, 500),  # Example random price, adjust according to your data
-                veg=np.random.randint(0,2), 
-                nonVeg=np.random.randint(0,2), 
-                image=row["image-url"],
-                image_url=row["image-url"],
-                embedded_vector=embedding_vector
-            )
+            try:
+                food_item = FoodItem.objects.create(
+                    name=row["TranslatedRecipeName"],
+                    price=np.random.randint(100, 500),  # Example random price, adjust according to your data
+                    veg=np.random.randint(0,2), 
+                    nonVeg=np.random.randint(0,2), 
+                    image=row["image-url"],
+                    image_url=row["image-url"],
+                    embedded_vector=embedding_vector
+                )
 
-            logging.info(f"Created FoodItem: {food_item.name} with embedding vector of length {len(embedding_vector)}")
+                logging.info(f"Created FoodItem: {food_item.name}")
+            
+            except Exception as e:
+                logging.error(e)
 
         for index, row in restaurants_df.iterrows():
             restaurant = Hotel.objects.create(

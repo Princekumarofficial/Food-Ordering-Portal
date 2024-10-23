@@ -19,7 +19,7 @@ class Hotel(models.Model):
         return self.name
 
 class FoodItem(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=500)
     price = models.IntegerField(range(1, 10000))
     veg = models.BooleanField()
     nonVeg = models.BooleanField()
