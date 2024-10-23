@@ -1,8 +1,8 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { ShoppingCart, X, Plus, Minus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react"
+import { ShoppingCart, X, Plus, Minus, ChevronDown, ChevronUp } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -10,23 +10,24 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import Image from "next/image";
-import { FoodItem, Hotel } from "@/types/hotel";
+} from "@/components/ui/card"
+import Image from "next/image"
+import { FoodItem, Hotel } from "@/types/hotel"
 import {
   get_cart,
   patch_cart,
   add_to_cart,
   delete_cart_item,
-} from "@/helpers/api";
-import { toast } from "react-hot-toast";
-import Link from "next/link";
+  getFoodItemSuggestionById,
+} from "@/helpers/api"
+import { toast } from "react-hot-toast"
+import Link from "next/link"
 
 type CartItem = {
-  id: number;
-  food_item: FoodItem;
-  quantity: number;
-};
+  id: number
+  food_item: FoodItem
+  quantity: number
+}
 
 export const RedBox: React.FC = () => (
   <span
@@ -38,7 +39,7 @@ export const RedBox: React.FC = () => (
       marginRight: "5px",
     }}
   ></span>
-);
+)
 
 export const GreenBox: React.FC = () => (
   <span
@@ -50,64 +51,74 @@ export const GreenBox: React.FC = () => (
       marginRight: "5px",
     }}
   ></span>
-);
+)
 
 export default function FoodDeliveryPage({
   hotelDetails,
 }: {
-  hotelDetails: Hotel;
+  hotelDetails: Hotel
 }) {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const foodItems = hotelDetails.food_items;
+  const [cartItems, setCartItems] = useState<CartItem[]>([])
+  const [isCartOpen, setIsCartOpen] = useState(false)
+  const [suggestedItems, setSuggestedItems] = useState<FoodItem[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const foodItems = hotelDetails.food_items
 
   useEffect(() => {
     async function fetchCart() {
-      const cartData = await get_cart();
-      setCartItems(cartData.items);
+      const cartData = await get_cart()
+      setCartItems(cartData.items)
     }
-    fetchCart();
-  }, []);
+    fetchCart()
+  }, [])
 
   const addToCart = async (item: FoodItem) => {
     try {
-      await add_to_cart({ food_item_id: item.id.toString() });
-      const cartData = await get_cart();
-      setCartItems(cartData.items);
+      await add_to_cart({ food_item_id: item.id.toString() })
+      const cartData = await get_cart()
+      setCartItems(cartData.items)
+      generateSuggestions(item)
     } catch (error) {
-      console.error("Failed to add item to cart", error);
+      console.error("Failed to add item to cart", error)
     }
-  };
+  }
 
   const removeFromCart = async (cart_item_id: string) => {
     try {
-      await delete_cart_item(cart_item_id);
-      const cartData = await get_cart();
-      setCartItems(cartData.items);
+      await delete_cart_item(cart_item_id)
+      const cartData = await get_cart()
+      setCartItems(cartData.items)
     } catch (error) {
-      toast.error("Failed remove item from cart");
+      toast.error("Failed remove item from cart")
     }
-  };
+  }
 
   const updateQuantity = async (id: number, delta: number) => {
-    const existingItem = cartItems.find((item) => item.food_item.id === id);
+    const existingItem = cartItems.find((item) => item.food_item.id === id)
     if (existingItem) {
-      const newQuantity = existingItem.quantity + delta;
+      const newQuantity = existingItem.quantity + delta
       if (newQuantity > 0) {
-        await patch_cart({ quantity: newQuantity }, existingItem.id.toString());
+        await patch_cart({ quantity: newQuantity }, existingItem.id.toString())
       } else {
-        await delete_cart_item(existingItem.id.toString());
+        await delete_cart_item(existingItem.id.toString())
       }
-      const cartData = await get_cart();
-      setCartItems(cartData.items);
+      const cartData = await get_cart()
+      setCartItems(cartData.items)
     }
-  };
+  }
 
   const getTotalPrice = () => {
     return cartItems
       .reduce((total, item) => total + item.food_item.price * item.quantity, 0)
-      .toFixed(2);
-  };
+      .toFixed(2)
+  }
+
+  const generateSuggestions = async (item: FoodItem) => {
+    // This is a simple suggestion algorithm. In a real app, you might use more sophisticated methods.
+    const suggestions = await getFoodItemSuggestionById(hotelDetails.id.toString(), item.id.toString())
+    setSuggestedItems(suggestions)
+    setShowSuggestions(true)
+  }
 
   return (
     <div className="container mx-auto p-4 relative min-h-screen bg-orange-50">
@@ -129,7 +140,7 @@ export default function FoodDeliveryPage({
           >
             <div className="relative h-48 bg-orange-100">
               <Image
-                src={item.image}
+                src={item.image_url}
                 alt={item.name}
                 layout="fill"
                 objectFit="cover"
@@ -200,7 +211,7 @@ export default function FoodDeliveryPage({
                     <div className="flex items-center">
                       <div className="relative w-16 h-16 mr-4">
                         <Image
-                          src={item.food_item.image}
+                          src={item.food_item.image_url}
                           alt={item.food_item.name}
                           layout="fill"
                           objectFit="cover"
@@ -260,6 +271,43 @@ export default function FoodDeliveryPage({
           </div>
         </div>
       )}
+
+{showSuggestions && suggestedItems.length > 0 && (
+        <div className="fixed bottom-24 right-8 bg-white p-4 rounded-lg shadow-lg max-w-sm w-full">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="font-semibold text-orange-600 text-lg">You might also like:</h3>
+            <Button variant="ghost" onClick={() => setShowSuggestions(false)}>
+              <ChevronDown className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="space-y-4">
+            {suggestedItems.map((item) => (
+              <div key={item.id} className="flex items-center space-x-4 bg-orange-50 p-2 rounded-lg">
+                <div className="relative w-16 h-16 flex-shrink-0">
+                  <Image
+                    src={item.image_url}
+                    alt={item.name}
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-md"
+                  />
+                </div>
+                <div className="flex-grow">
+                  <h4 className="font-semibold text-orange-800">{item.name}</h4>
+                  <p className="text-sm text-orange-600">Rs. {item.price.toFixed(2)}</p>
+                </div>
+                <Button
+                  size="sm"
+                  onClick={() => addToCart(item)}
+                  className="bg-orange-500 hover:bg-orange-600 text-white"
+                >
+                  Add
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
-  );
+  )
 }

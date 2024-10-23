@@ -11,8 +11,9 @@ class Hotel(models.Model):
     rating = models.IntegerField(range(1,5))
     nonVeg = models.BooleanField()
     veg = models.BooleanField()
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     hotel_image = models.ImageField(upload_to='images/', blank=True, null=True)
+    image_url = models.URLField(blank=True, null=True)
 
     def __str__(self) -> str:
         return self.name
@@ -24,6 +25,8 @@ class FoodItem(models.Model):
     nonVeg = models.BooleanField()
     hotels = models.ManyToManyField(Hotel, related_name='food_items')
     image = models.ImageField(upload_to='images/', blank=True, null=True)
+    embedded_vector = models.JSONField(null=True, blank=True)
+    image_url = models.URLField(blank=True, null=True)
 
     def __str__(self) -> str:
         return self.name

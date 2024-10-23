@@ -6,6 +6,7 @@ export interface HotelListParams {
     veg: boolean;
     nonVeg: boolean;
     hotel_image: string;
+    image_url: string;
     description? :string;
   }
 
@@ -16,6 +17,7 @@ export interface HotelListParams {
     veg: boolean;
     nonVeg: boolean;
     image: string;
+    image_url: string;
     description?: string;
   }
   

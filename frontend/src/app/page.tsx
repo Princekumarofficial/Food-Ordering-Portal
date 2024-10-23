@@ -44,7 +44,7 @@ export default function Home() {
             restaurants.map((restaurant) => (
               <Card key={restaurant.id} className="overflow-hidden">
                 <img
-                  src={restaurant.hotel_image}
+                  src={restaurant.image_url}
                   alt={restaurant.name}
                   className="w-full h-48 object-cover"
                 />

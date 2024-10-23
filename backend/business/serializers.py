@@ -4,7 +4,7 @@ from .models import FoodItem
 
 class HotelSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('id', 'name', 'address', 'minPrice', 'rating', 'veg', 'nonVeg', 'hotel_image')
+        fields = ('id', 'name', 'address', 'minPrice', 'rating', 'veg', 'nonVeg', 'image_url')
         read_only_fields = ['user']
         model = Hotel
 
@@ -15,7 +15,7 @@ class HotelSerializer(serializers.ModelSerializer):
 
 class FoodItemSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('id', 'name', 'price', 'veg', 'nonVeg', 'image')
+        fields = ('id', 'name', 'price', 'veg', 'nonVeg', 'image', 'image_url')
         model = FoodItem
 
 class HotelDetailSerializer(serializers.ModelSerializer):
@@ -23,4 +23,4 @@ class HotelDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Hotel
-        fields = ['id', 'name', 'address', 'minPrice', 'rating', 'nonVeg', 'veg', 'food_items']
+        fields = ['id', 'name', 'address', 'minPrice', 'rating', 'nonVeg', 'veg', 'food_items', 'image_url']

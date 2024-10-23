@@ -1,7 +1,9 @@
+from rest_framework.views import APIView
 from rest_framework import generics, permissions
 from .serializers import HotelSerializer, FoodItemSerializer, HotelDetailSerializer
 from .models import Hotel, FoodItem
 from rest_framework.parsers import MultiPartParser, FormParser
+from .recommender import FoodItemRecommender
 
 class HotelList(generics.ListCreateAPIView):
     permission_classes = (permissions.AllowAny, )
@@ -24,3 +26,11 @@ class FoodItemList(generics.ListCreateAPIView):
 class FoodItemDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = FoodItem.objects.all()
     serializer_class = FoodItemSerializer
+
+
+class FoodItemRecommendation(APIView):
+    serializer_class = FoodItemSerializer
+
+    def get(self, request, pk, hotel_id):
+        recommendor = FoodItemRecommender()
+        return recommendor.fooditem_recommendations_by_id(pk, hotel_id=hotel_id)

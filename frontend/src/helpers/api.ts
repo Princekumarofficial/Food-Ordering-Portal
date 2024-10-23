@@ -24,7 +24,12 @@ export const apiCall = async (
   }: ApiCallOptions = {}
 ) => {
   const accessToken = getCookie("accessToken");
-  if (!accessToken && isAuth && window.location.pathname != "/login" && window.location.pathname != "/register") {
+  if (
+    !accessToken &&
+    isAuth &&
+    window.location.pathname != "/login" &&
+    window.location.pathname != "/register"
+  ) {
     window.location.href = "/login";
     return;
   }
@@ -38,8 +43,10 @@ export const apiCall = async (
 
   if ((method == "POST" || method == "PATCH") && body) {
     req["body"] = JSON.stringify(body);
-    if(headers["Content-Type"]){
-    }else { headers["Content-Type"] = "application/json";}
+    if (headers["Content-Type"]) {
+    } else {
+      headers["Content-Type"] = "application/json";
+    }
   }
   if ((method == "POST" || method == "PATCH") && formData) {
     req["body"] = formData;
@@ -52,7 +59,7 @@ export const apiCall = async (
   if (isAuth) {
     headers["Authorization"] = `Bearer ${accessToken}`;
   }
-  if(csrftoken){
+  if (csrftoken) {
     headers["X-CSRFToken"] = csrftoken;
   }
   req["headers"] = headers;
@@ -62,8 +69,9 @@ export const apiCall = async (
   }
 
   const res = await fetch(requestUrl, req);
-  if (method!="DELETE") {
-  return res.json();}
+  if (method != "DELETE") {
+    return res.json();
+  }
 };
 
 function getCSRFCookie(name: string) {
@@ -83,25 +91,35 @@ function getCSRFCookie(name: string) {
 }
 
 export async function getHotelList() {
-    return apiCall("/hotels", {method: "GET"});
+  return apiCall("/hotels", { method: "GET" });
 }
 
 export async function getHotelDetail(id: string) {
-    return apiCall(`/hotels/${id}`, {method: "GET"});
+  return apiCall(`/hotels/${id}`, { method: "GET" });
 }
 
 export async function get_cart() {
-    return apiCall("/cart", {method: "GET"});
+  return apiCall("/cart", { method: "GET" });
 }
 
-export async function add_to_cart(data: {food_item_id: string}) {
-    return apiCall("/cart/add", {method: "POST", body: data});
+export async function add_to_cart(data: { food_item_id: string }) {
+  return apiCall("/cart/add", { method: "POST", body: data });
 }
 
-export async function patch_cart(data: {quantity: number}, cart_item_id: string,) {
-    return apiCall(`/cart/update/${cart_item_id}`, {method: "PATCH", body: data});
+export async function patch_cart(
+  data: { quantity: number },
+  cart_item_id: string
+) {
+  return apiCall(`/cart/update/${cart_item_id}`, {
+    method: "PATCH",
+    body: data,
+  });
 }
 
 export async function delete_cart_item(cart_item_id: string) {
-    return apiCall(`/cart/remove/${cart_item_id}`, {method: "DELETE"});
+  return apiCall(`/cart/remove/${cart_item_id}`, { method: "DELETE" });
+}
+
+export async function getFoodItemSuggestionById(hotel_id: string, food_item_id: string){
+  return apiCall(`/recommendations/${hotel_id}/food/${food_item_id}`)
 }

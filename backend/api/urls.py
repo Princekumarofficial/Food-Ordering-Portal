@@ -1,5 +1,5 @@
 from django.urls import path
-from business.views import HotelList, HotelDetail, FoodItemList, FoodItemDetail
+from business.views import HotelList, HotelDetail, FoodItemList, FoodItemDetail, FoodItemRecommendation
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -29,5 +29,6 @@ urlpatterns = [
     path('cart/remove/<int:cart_item_id>/', RemoveItemFromCartView.as_view(), name='remove_item_from_cart'),
     path('payments/', PaymentListCreateView.as_view(), name='payment-list-create'),
     path('payments/<int:pk>/', PaymentDetailView.as_view(), name='payment-detail'),
+    path('recommendations/<int:hotel_id>/food/<int:pk>/', FoodItemRecommendation.as_view(), name='fooditem-recommendations'),
 ]
 
