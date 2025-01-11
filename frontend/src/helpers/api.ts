@@ -120,6 +120,18 @@ export async function delete_cart_item(cart_item_id: string) {
   return apiCall(`/cart/remove/${cart_item_id}`, { method: "DELETE" });
 }
 
-export async function getFoodItemSuggestionById(hotel_id: string, food_item_id: string){
-  return apiCall(`/recommendations/${hotel_id}/food/${food_item_id}`)
+export async function getFoodItemSuggestionById(
+  hotel_id: string,
+  food_item_id: string
+) {
+  return apiCall(`/recommendations/${hotel_id}/food/${food_item_id}`);
+}
+
+export async function orderConfirmation() {
+  return apiCall("/payments", {
+    method: "POST",
+    body: {
+      payment_method: "cod",
+    },
+  });
 }
