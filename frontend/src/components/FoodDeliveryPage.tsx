@@ -283,7 +283,7 @@ export default function FoodDeliveryPage({
       )}
 
       {showSuggestions && suggestedItems.length > 0 && (
-        <div className="fixed bottom-24 right-8 bg-white p-4 rounded-lg shadow-lg max-w-sm w-full">
+        <div className="fixed bottom-24 right-8 bg-white p-4 rounded-lg shadow-lg max-w-sm w-[80vw] max-h-[80vh] overflow-y-auto">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-semibold text-orange-600 text-lg">
               You might also like:
